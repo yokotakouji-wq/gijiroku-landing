@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>議事録メーカー｜信楽荘</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --blue: #3b82f6;
+    --blue-light: #eff6ff;
+    --blue-mid: #dbeafe;
+    --orange: #f59e0b;
+    --orange-dark: #d97706;
+    --green: #22c55e;
+    --ink: #1f2937;
+    --ink-mid: #4b5563;
+    --ink-light: #9ca3af;
+    --border: #e5e7eb;
+    --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .header-icon {
+    width: 32px; height: 32px;
+    background: var(--blue-light);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .header-title { font-size: 1rem; font-weight: 700; }
+  .header-sub { font-size: 0.75rem; color: var(--ink-light); margin-left: auto; }
+
+  .hero-wrap { padding: 48px 20px 40px; text-align: center; }
+  .hero-card {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 48px 36px 40px;
+    max-width: 600px;
+    margin: 0 auto;
+    animation: fadeUp 0.6s ease both;
+  }
+  .mic-circle {
+    width: 80px; height: 80px;
+    background: var(--blue-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .hero-flow {
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    margin-bottom: 20px;
+    letter-spacing: 0.04em;
+  }
+  .hero-flow .arrow { color: var(--blue); margin: 0 4px; }
+  .hero-card h1 {
+    font-size: 1.55rem; font-weight: 700;
+    line-height: 1.6; margin-bottom: 16px;
+  }
+  .hero-card h1 span { color: var(--blue); }
+  .hero-card p {
+    font-size: 0.9rem; color: var(--ink-mid);
+    line-height: 1.9; margin-bottom: 28px;
+  }
+  .btn-orange {
+    display: inline-block;
+    background: var(--orange); color: #fff;
+    font-size: 0.95rem; font-weight: 700;
+    padding: 13px 36px; border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(245,158,11,0.35);
+    transition: background 0.15s;
+  }
+  .btn-orange:hover { background: var(--orange-dark); }
+
+  .section { padding: 0 20px 36px; max-width: 660px; margin: 0 auto; }
+  .section-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header h2 { font-size: 0.82rem; font-weight: 500; color: var(--ink-mid); letter-spacing: 0.06em; }
+
+  .steps-card {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .step-row {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .step-row:last-child { border-bottom: none; }
+  .step-num-col {
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 20px 0;
+    border-right: 1px solid var(--border);
+  }
+  .step-num {
+    width: 26px; height: 26px;
+    background: var(--blue); color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+  }
+  .step-content { padding: 18px 18px 18px 16px; }
+  .step-content h3 { font-size: 0.92rem; font-weight: 700; margin-bottom: 5px; }
+  .step-content p { font-size: 0.82rem; color: var(--ink-mid); line-height: 1.8; }
+  .step-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    background: var(--blue-mid); color: var(--blue);
+    padding: 2px 10px; border-radius: 20px;
+    margin-top: 7px; font-weight: 500;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 460px) { .features-grid { grid-template-columns: 1fr; } }
+  .feature-card {
+    background: var(--card);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 18px 16px;
+  }
+  .feature-card .icon { margin-bottom: 10px; display: flex; align-items: center; }
+  .feature-card h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 5px; }
+  .feature-card p { font-size: 0.78rem; color: var(--ink-mid); line-height: 1.8; }
+
+  .notice-card {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-top: 10px;
+  }
+  .notice-card p { font-size: 0.8rem; color: #92400e; line-height: 1.9; }
+  .notice-card strong { font-weight: 700; color: #78350f; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--card);
+    padding: 22px 20px;
+    text-align: center;
+    margin-top: 40px;
+  }
+  footer p { font-size: 0.74rem; color: var(--ink-light); line-height: 2; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-icon">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="9" y="2" width="6" height="12" rx="3" fill="#3b82f6"/>
+      <path d="M5 11a7 7 0 0 0 14 0" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="12" y1="18" x2="12" y2="22" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="8" y1="22" x2="16" y2="22" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="header-title">議事録メーカー</div>
+  <div class="header-sub">信楽荘 内部ツール</div>
+</header>
+
+<div class="hero-wrap">
+  <div class="hero-card">
+    <div class="mic-circle">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="9" y="2" width="6" height="12" rx="3" fill="#3b82f6"/>
+        <path d="M5 11a7 7 0 0 0 14 0" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="18" x2="12" y2="22" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+        <line x1="8" y1="22" x2="16" y2="22" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="hero-flow">
+      録音 <span class="arrow">→</span> 文字起こし <span class="arrow">→</span> AI議事録 <span class="arrow">→</span> Word
+    </div>
+    <h1>録音するだけで、<br><span>議事録が完成する。</span></h1>
+    <p>会議の音声を録るだけ。文字起こしから整形・Word出力まで、すべて自動です。<br>誰でも使えて、誰が使っても同じ品質で仕上がります。</p>
+    <a href="https://gijiroku-v3.vercel.app" target="_blank" class="btn-orange">議事録を作成する <svg style="display:inline;vertical-align:middle;margin-left:6px" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 3l12 9-6 1.5L9.5 21 6 3z" fill="white" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></a>
+  </div>
+</div>
+
+<div class="section" id="steps">
+  <div class="section-header"><h2>使い方 — 4ステップで完成</h2></div>
+  <div class="steps-card">
+    <div class="step-row">
+      <div class="step-num-col"><div class="step-num">1</div></div>
+      <div class="step-content">
+        <h3>まず録音を開始する</h3>
+        <p>「録音開始」ボタンを押すだけ。会議名・参加者などは録音しながら、あるいは録音後に入力できます。何も入力しなくてもOKです。</p>
+        <span class="step-badge">PC推奨（バックグラウンド録音対応）</span>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num-col"><div class="step-num">2</div></div>
+      <div class="step-content">
+        <h3>落ち着いて会議情報を入力する（任意）</h3>
+        <p>録音中・録音後のいつでも、会議名・参加者などを入力できます。空欄のまま処理しても、音声から自動で読み取ります。</p>
+        <span class="step-badge">入力しなくても音声から自動入力されます</span>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num-col"><div class="step-num">3</div></div>
+      <div class="step-content">
+        <h3>停止すると自動で処理が始まる</h3>
+        <p>「停止」を押すと音声データが保存され、文字起こし・議事録生成が自動で始まります。その場を離れても大丈夫です。</p>
+        <span class="step-badge">処理中もデータは安全に保存されます</span>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num-col"><div class="step-num">4</div></div>
+      <div class="step-content">
+        <h3>確認して Word 出力</h3>
+        <p>生成された議事録をプレビューで確認。人名・数値などを手直した後、Word形式でダウンロードできます。出力後もWord上で再編集が可能です。</p>
+        <span class="step-badge">Word (.docx) 出力</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header"><h2>特徴</h2></div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="2" width="16" height="20" rx="2" stroke="#3b82f6" stroke-width="1.8"/>
+          <line x1="8" y1="8" x2="16" y2="8" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="8" y1="12" x2="16" y2="12" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="8" y1="16" x2="12" y2="16" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h4>フォーマット統一</h4>
+      <p>誰が録っても同じ形の議事録が出ます。個人差・バラつきがありません。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="7" y="11" width="10" height="10" rx="1.5" stroke="#3b82f6" stroke-width="1.8"/>
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="12" cy="16" r="1.2" fill="#3b82f6"/>
+        </svg>
+      </div>
+      <h4>データ消失ゼロ</h4>
+      <p>処理に失敗しても音声データは保持されます。やり直しがいつでもできます。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h4>手修正できる</h4>
+      <p>生成後に各セクションを個別に編集できます。固有名詞の訂正も簡単です。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="#3b82f6" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M14 2v6h6" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="8" y1="13" x2="16" y2="13" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="8" y1="17" x2="13" y2="17" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h4>Word直接出力</h4>
+      <p>そのまま .docx ダウンロード。コピペ不要でそのまま提出できます。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="notice-card">
+    <p><strong>⚠️ AIによる生成物は必ず確認をお願いします。</strong><br>
+    固有名詞・数値・決定事項はAIが聞き間違える場合があります。出力後に担当者が内容を確認・修正してから提出してください。録音データおよび議事録は施設内での業務利用に限ります。</p>
+  </div>
+</div>
+
+<div style="text-align:center; padding: 0 20px 48px;">
+  <a href="https://gijiroku-v3.vercel.app" target="_blank" class="btn-orange">議事録を作成する <svg style="display:inline;vertical-align:middle;margin-left:6px" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 3l12 9-6 1.5L9.5 21 6 3z" fill="white" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></a>
+</div>
+
+<footer>
+  <p>信楽荘 内部ツール ／ 議事録メーカー<br>ご不明点はユニットリーダー 横田 まで</p>
+</footer>
+
+</body>
+</html>
